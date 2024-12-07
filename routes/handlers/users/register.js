@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt');
-const { Users } = require('../../../models');
+const { Users } = require('@models');
 const { Op } = require('sequelize');
 const Validator = require('fastest-validator');
 const v = new Validator();
@@ -9,7 +9,9 @@ const { v4: uuidv4 } = require('uuid');
 module.exports = async (req, res) => {
   try {
     const schema = {
+      email: { type: 'string', empty: 'false' },
       password: { type: 'string', min: 8, empty: 'false' },
+      gender: { type: 'string', empty: 'false' },
     };
     const validate = v.validate(req.body, schema);
     if (validate.length) {
@@ -103,6 +105,8 @@ module.exports = async (req, res) => {
 
     return res.status(201).json({
       status: 'success',
+      userId,
+      role,
     });
   } catch (error) {
     if (error.response) {
