@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 const { Users } = require('../../../models');
-
+const { Op } = require('sequelize');
 const Validator = require('fastest-validator');
 const v = new Validator();
 
@@ -23,9 +23,9 @@ module.exports = async (req, res) => {
     const first_name = req.body.first;
     const last_name = req.body.last;
     const role = req.body.role || 'user';
-    const countryPhone = req.body.phone.substring(0, 3);
-    const thePhone = req.body.phone.slice(3);
-    const fullPhone = `${countryPhone} ${thePhone}`;
+    const country_phone = req.body.phone.substring(0, 3);
+    const phone = req.body.phone.slice(3);
+    const full_phone = `${country_phone} ${phone}`;
 
     const role_values = Users.rawAttributes.role.values;
     const gender_values = Users.rawAttributes.gender.values;
@@ -38,38 +38,63 @@ module.exports = async (req, res) => {
       });
     }
 
-    await Users.findOne({
-      attributes: ['id'],
-      where: { email: req.body.email },
-      raw: true,
-    })
-      .then((duplicate) => {
-        if (duplicate)
-          throw {
-            response: {
-              status: 409,
-              data: {
-                status: 'error',
-                message: 'Email already exists!',
-              },
-            },
-          };
+    const userId = uuidv4();
+
+    await Promise.all([
+      Users.findOne({
+        attributes: ['id'],
+        where: { id: { [Op.not]: userId }, full_phone },
+        raw: true,
       })
-      .catch((error) => {
-        throw error;
-      });
+        .then((duplicate) => {
+          if (duplicate)
+            throw {
+              response: {
+                status: 409,
+                data: {
+                  status: 'error',
+                  message: 'Phone number already used!',
+                },
+              },
+            };
+        })
+        .catch((error) => {
+          throw error;
+        }),
+      Users.findOne({
+        attributes: ['id'],
+        where: { email: req.body.email },
+        raw: true,
+      })
+        .then((duplicate) => {
+          if (duplicate)
+            throw {
+              response: {
+                status: 409,
+                data: {
+                  status: 'error',
+                  message: 'Email already exists!',
+                },
+              },
+            };
+        })
+        .catch((error) => {
+          throw error;
+        }),
+    ]);
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const generateUUID = uuidv4();
     const setData = {
-      id: generateUUID,
+      id: userId,
       first_name,
       last_name,
       full_name: `${first_name} ${last_name}`,
       password: hashedPassword,
       email,
-      phone: fullPhone,
+      country_phone,
+      phone,
+      full_phone,
       role,
       gender,
     };
