@@ -44,8 +44,6 @@
   },
   "_moduleAliases": {
     "@config": "./config",
-    "@models": "./models",
-    "@routes": "./routes",
-    "@usersHandlers": "./routes/handlers/users"
+    "@models": "./models"
   }
 }
