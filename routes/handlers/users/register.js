@@ -21,10 +21,9 @@ module.exports = async (req, res) => {
       });
     }
 
-    const { email, password, gender } = req.body;
+    const { email, password, gender, role } = req.body;
     const first_name = req.body.first;
     const last_name = req.body.last;
-    const role = req.body.role || 'user';
     const country_phone = req.body.phone.substring(0, 3);
     const phone = req.body.phone.slice(3);
     const full_phone = `${country_phone}${phone}`;
@@ -32,7 +31,7 @@ module.exports = async (req, res) => {
     const role_values = Users.rawAttributes.role.values;
     const gender_values = Users.rawAttributes.gender.values;
     if (
-      !role_values.includes(role) ||
+      (role && !role_values.includes(role)) ||
       (gender && !gender_values.includes(gender))
     ) {
       return res.status(400).json({

@@ -54,6 +54,11 @@ module.exports = {
           full_phone: {
             type: Sequelize.STRING,
           },
+          isVerified: {
+            type: Sequelize.BOOLEAN,
+            defaultValue: false,
+            allowNull: false,
+          },
           created_at: {
             allowNull: false,
             type: Sequelize.DATE,
