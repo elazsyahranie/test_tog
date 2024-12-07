@@ -27,7 +27,7 @@ module.exports = async (req, res) => {
     const role = req.body.role || 'user';
     const country_phone = req.body.phone.substring(0, 3);
     const phone = req.body.phone.slice(3);
-    const full_phone = `${country_phone} ${phone}`;
+    const full_phone = `${country_phone}${phone}`;
 
     const role_values = Users.rawAttributes.role.values;
     const gender_values = Users.rawAttributes.gender.values;
