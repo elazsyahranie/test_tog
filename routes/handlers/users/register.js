@@ -25,10 +25,10 @@ module.exports = async (req, res) => {
     const role = req.body.role || 'user';
     const countryPhone = req.body.phone.substring(0, 3);
     const thePhone = req.body.phone.slice(3);
-    const phone = `${countryPhone} ${thePhone}`;
+    const fullPhone = `${countryPhone} ${thePhone}`;
 
-    const role_values = Users.rawAttributes.role.validate.isIn.args[0];
-    const gender_values = Users.rawAttributes.gender.validate.isIn.args[0];
+    const role_values = Users.rawAttributes.role.values;
+    const gender_values = Users.rawAttributes.gender.values;
     if (
       !role_values.includes(role) ||
       (gender && !gender_values.includes(gender))
@@ -69,7 +69,7 @@ module.exports = async (req, res) => {
       full_name: `${first_name} ${last_name}`,
       password: hashedPassword,
       email,
-      phone,
+      phone: fullPhone,
       role,
       gender,
     };
