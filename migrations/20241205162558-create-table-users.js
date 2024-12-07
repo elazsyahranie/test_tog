@@ -32,12 +32,14 @@ module.exports = {
             allowNull: false,
           },
           role: {
-            type: Sequelize.STRING,
+            type: Sequelize.ENUM,
             defaultValue: 'user',
-            allowNull: false,
+            values: ['user', 'admin'],
+            // allowNull: false,
           },
           gender: {
-            type: Sequelize.STRING,
+            type: Sequelize.ENUM,
+            values: ['male', 'female'],
             allowNull: false,
           },
           about: {
@@ -68,33 +70,33 @@ module.exports = {
         { transaction },
       );
 
-      await queryInterface.addConstraint('users', {
-        type: 'unique',
-        fields: ['email'],
-        name: 'UNIQUE_USERS_EMAIL',
-        transaction,
-      });
+      // await queryInterface.addConstraint('users', {
+      //   type: 'unique',
+      //   fields: ['email'],
+      //   name: 'UNIQUE_USERS_EMAIL',
+      //   transaction,
+      // });
 
-      await queryInterface.addConstraint('users', {
-        fields: ['role'],
-        type: 'check',
-        where: {
-          gender: ['male', 'female'],
-        },
-        name: 'check_role_valid_values',
-        defaultValue: 'user',
-        transaction,
-      });
+      // await queryInterface.addConstraint('users', {
+      //   fields: ['role'],
+      //   type: 'check',
+      //   where: {
+      //     gender: ['male', 'female'],
+      //   },
+      //   name: 'check_role_valid_values',
+      //   defaultValue: 'user',
+      //   transaction,
+      // });
 
-      await queryInterface.addConstraint('users', {
-        fields: ['gender'],
-        type: 'check',
-        where: {
-          gender: ['male', 'female'],
-        },
-        name: 'check_gender_valid_values',
-        transaction,
-      });
+      // await queryInterface.addConstraint('users', {
+      //   fields: ['gender'],
+      //   type: 'check',
+      //   where: {
+      //     gender: ['male', 'female'],
+      //   },
+      //   name: 'check_gender_valid_values',
+      //   transaction,
+      // });
 
       await queryInterface.sequelize.query(
         `CREATE COLLATION IF NOT EXISTS numeric (provider = icu, locale = 'en-u-kn-true')`,
@@ -108,9 +110,22 @@ module.exports = {
     }
   },
   async down(queryInterface, _Sequelize) {
+    const transaction = await queryInterface.sequelize.transaction();
     try {
       await queryInterface.dropTable('users');
+
+      await queryInterface.sequelize.query(
+        `DROP TYPE IF EXISTS "enum_users_gender"`,
+        { transaction },
+      );
+
+      await queryInterface.sequelize.query(
+        `DROP TYPE IF EXISTS "enum_users_role"`,
+        { transaction },
+      );
+      await transaction.commit();
     } catch (error) {
+      await transaction.rollback();
       throw error;
     }
   },

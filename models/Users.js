@@ -27,23 +27,15 @@ module.exports = (Sequelize, DataTypes) => {
         allowNull: false,
       },
       role: {
-        type: DataTypes.STRING,
+        type: DataTypes.ENUM,
         defaultValue: 'user',
         allowNull: false,
-        validate: {
-          isIn: {
-            args: [['user', 'admin']],
-          },
-        },
+        values: ['user', 'admin'],
       },
       gender: {
         type: DataTypes.STRING,
         allowNull: false,
-        validate: {
-          isIn: {
-            args: [['male', 'female']],
-          },
-        },
+        values: ['male', 'female'],
       },
       about: {
         type: DataTypes.TEXT,
