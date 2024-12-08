@@ -21,7 +21,7 @@ module.exports = async (req, res) => {
       });
     }
 
-    const { email, password, gender, role } = req.body;
+    const { email, password, gender, role, about } = req.body;
     const first_name = req.body.first;
     const last_name = req.body.last;
     const country_phone = req.body.phone.substring(0, 3);
@@ -98,6 +98,7 @@ module.exports = async (req, res) => {
       full_phone,
       role,
       gender,
+      about,
     };
 
     await Users.create(setData);
