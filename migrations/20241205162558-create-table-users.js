@@ -35,7 +35,7 @@ module.exports = {
             type: Sequelize.ENUM,
             defaultValue: 'user',
             values: ['user', 'admin'],
-            // allowNull: false,
+            allowNull: false,
           },
           gender: {
             type: Sequelize.ENUM,
@@ -53,6 +53,10 @@ module.exports = {
           },
           full_phone: {
             type: Sequelize.STRING,
+          },
+          username: {
+            type: Sequelize.STRING,
+            allowNull: false,
           },
           isVerified: {
             type: Sequelize.BOOLEAN,
@@ -74,34 +78,6 @@ module.exports = {
         },
         { transaction },
       );
-
-      // await queryInterface.addConstraint('users', {
-      //   type: 'unique',
-      //   fields: ['email'],
-      //   name: 'UNIQUE_USERS_EMAIL',
-      //   transaction,
-      // });
-
-      // await queryInterface.addConstraint('users', {
-      //   fields: ['role'],
-      //   type: 'check',
-      //   where: {
-      //     gender: ['male', 'female'],
-      //   },
-      //   name: 'check_role_valid_values',
-      //   defaultValue: 'user',
-      //   transaction,
-      // });
-
-      // await queryInterface.addConstraint('users', {
-      //   fields: ['gender'],
-      //   type: 'check',
-      //   where: {
-      //     gender: ['male', 'female'],
-      //   },
-      //   name: 'check_gender_valid_values',
-      //   transaction,
-      // });
 
       await queryInterface.sequelize.query(
         `CREATE COLLATION IF NOT EXISTS numeric (provider = icu, locale = 'en-u-kn-true')`,
