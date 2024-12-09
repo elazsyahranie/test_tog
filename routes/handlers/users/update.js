@@ -1,5 +1,7 @@
 const { Users } = require('@models');
 const { Op } = require('sequelize');
+const slugify = require('slugify');
+const { v4: uuidv4 } = require('uuid');
 
 module.exports = async (req, res) => {
   try {
@@ -9,6 +11,14 @@ module.exports = async (req, res) => {
     const last_name = req.body.last || findUser.last_name;
     const full_name = `${first_name} ${last_name}`;
     const { email, gender, about } = req.body;
+
+    const slugifyIt = slugify(full_name, {
+      replacement: '-',
+      remove: undefined,
+      lower: true,
+      trim: true,
+    });
+    let slugifiedName = `${slugifyIt}-${uuidv4().slice(0, 6)}`;
 
     const checkQueries = [];
     checkQueries.push(
@@ -59,6 +69,8 @@ module.exports = async (req, res) => {
             throw err;
           }),
       );
+    } else {
+      checkQueries.push(null);
     }
 
     let country_phone;
@@ -97,6 +109,18 @@ module.exports = async (req, res) => {
       checkQueries.push(null);
     }
 
+    checkQueries.push(
+      Users.findAll({ attributes: ['id'], where: { username: slugifiedName } })
+        .then((res) => {
+          if (res.length) {
+            slugifiedName += `-${slugifiedName}`;
+          }
+        })
+        .catch((err) => {
+          throw err;
+        }),
+    );
+
     await Promise.all(checkQueries);
 
     const setData = {};
@@ -118,6 +142,7 @@ module.exports = async (req, res) => {
       setData.gender = gender;
     }
 
+    setData.username = slugifiedName;
     if (country_phone) setData.country_phone = country_phone;
     if (phone) setData.phone = phone;
     if (full_phone) setData.full_phone = full_phone;

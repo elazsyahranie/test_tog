@@ -49,6 +49,10 @@ module.exports = (Sequelize, DataTypes) => {
       full_phone: {
         type: DataTypes.STRING,
       },
+      username: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
       isVerified: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,

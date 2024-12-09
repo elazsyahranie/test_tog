@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt');
+const slugify = require('slugify');
 const { Users } = require('@models');
 const { Op } = require('sequelize');
 const Validator = require('fastest-validator');
@@ -21,9 +22,12 @@ module.exports = async (req, res) => {
       });
     }
 
+    const userId = uuidv4();
+
     const { email, password, gender, role, about } = req.body;
     const first_name = req.body.first;
     const last_name = req.body.last;
+    const full_name = `${first_name} ${last_name}`;
     const country_phone = req.body.phone.substring(0, 3);
     const phone = req.body.phone.slice(3);
     const full_phone = `${country_phone}${phone}`;
@@ -39,7 +43,13 @@ module.exports = async (req, res) => {
       });
     }
 
-    const userId = uuidv4();
+    const slugifyIt = slugify(full_name, {
+      replacement: '-',
+      remove: undefined,
+      lower: true,
+      trim: true,
+    });
+    let slugifiedName = `${slugifyIt}-${uuidv4().slice(0, 6)}`;
 
     await Promise.all([
       Users.findOne({
@@ -82,6 +92,15 @@ module.exports = async (req, res) => {
         .catch((error) => {
           throw error;
         }),
+      Users.findAll({ attributes: ['id'], where: { username: slugifiedName } })
+        .then((res) => {
+          if (res.length) {
+            slugifiedName += `-${slugifiedName}`;
+          }
+        })
+        .catch((err) => {
+          throw err;
+        }),
     ]);
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -90,8 +109,9 @@ module.exports = async (req, res) => {
       id: userId,
       first_name,
       last_name,
-      full_name: `${first_name} ${last_name}`,
+      full_name,
       password: hashedPassword,
+      username: slugifiedName,
       email,
       country_phone,
       phone,
