@@ -93,7 +93,7 @@ module.exports = {
   async down(queryInterface, _Sequelize) {
     const transaction = await queryInterface.sequelize.transaction();
     try {
-      await queryInterface.dropTable('users');
+      await queryInterface.dropTable('users', { transaction });
 
       await queryInterface.sequelize.query(
         `DROP TYPE IF EXISTS "enum_users_gender"`,
