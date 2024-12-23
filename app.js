@@ -8,6 +8,7 @@ require('module-alias/register');
 
 const indexRouter = require('./routes/index');
 const vehiclesRouter = require('./routes/vehicles');
+const locationHistoriesRouter = require('./routes/location_histories');
 
 const app = express();
 
@@ -23,6 +24,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/vehicles', vehiclesRouter);
+app.use('/location-histories', locationHistoriesRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
