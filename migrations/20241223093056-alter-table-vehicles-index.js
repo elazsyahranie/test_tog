@@ -9,6 +9,6 @@ module.exports = {
   },
 
   async down(queryInterface, _Sequelize) {
-    await queryInterface.sequelize.query(`DROP INDEX idx_vehicles`);
+    await queryInterface.sequelize.query(`DROP INDEX idx_vehicles ON vehicles`);
   },
 };
