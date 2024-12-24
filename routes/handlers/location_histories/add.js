@@ -29,16 +29,11 @@ module.exports = async (req, res) => {
       });
     }
 
-    const countRows = await LocationHistories.findAll({
+    let countRows = await LocationHistories.findAll({
       attributes: ['location_id'],
       raw: true,
-    })
-      .then((res) => {
-        return res.length;
-      })
-      .catch((err) => {
-        throw err;
-      });
+    });
+    countRows = countRows.length;
 
     function convertToPaddedNumber(number, totalDigits) {
       const numberStr = (number + 1).toString();
@@ -80,6 +75,7 @@ module.exports = async (req, res) => {
       .slice(0, 10);
 
     const checkCounter = await Counters.findOne({ raw: true });
+    countRows = countRows + 1;
     if (!checkCounter) {
       await Counters.create({ id: counterId, last_number: countRows });
     } else {
