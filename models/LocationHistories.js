@@ -2,7 +2,7 @@ module.exports = (Sequelize, DataTypes) => {
   const LocationHistories = Sequelize.define(
     'LocationHistories',
     {
-      id: {
+      location_id: {
         allowNull: false,
         unsigned: true,
         primaryKey: true,
