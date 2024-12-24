@@ -4,7 +4,7 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     try {
       await queryInterface.createTable('location_histories', {
-        id: {
+        location_id: {
           allowNull: false,
           unsigned: true,
           primaryKey: true,
