@@ -1,5 +1,5 @@
 {
-  "name": "service-user",
+  "name": "test-tog",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -42,9 +42,5 @@
   },
   "devDependencies": {
     "sequelize-cli": "^6.6.2"
-  },
-  "_moduleAliases": {
-    "@config": "./config",
-    "@models": "./models"
   }
 }

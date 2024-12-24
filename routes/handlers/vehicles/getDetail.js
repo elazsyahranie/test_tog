@@ -1,4 +1,4 @@
-const { Vehicles } = require('@models');
+const { Vehicles } = require('../../../models');
 
 module.exports = async (req, res) => {
   try {

@@ -1,4 +1,4 @@
-const { Vehicles } = require('@models');
+const { Vehicles } = require('../../../models');
 const { Op } = require('sequelize');
 const Validator = require('fastest-validator');
 const v = new Validator();

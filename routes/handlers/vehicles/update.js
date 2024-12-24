@@ -1,4 +1,4 @@
-const { Vehicles } = require('@models');
+const { Vehicles } = require('../../../models');
 const { Op } = require('sequelize');
 
 module.exports = async (req, res) => {
