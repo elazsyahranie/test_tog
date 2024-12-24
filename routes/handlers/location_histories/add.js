@@ -1,4 +1,4 @@
-const { LocationHistories, Counters } = require('../../../models');
+const { Vehicles, LocationHistories, Counters } = require('../../../models');
 const { fn, literal } = require('sequelize');
 const { v4: uuidv4 } = require('uuid');
 const Validator = require('fastest-validator');
@@ -60,6 +60,18 @@ module.exports = async (req, res) => {
       'ST_PointFromText',
       literal(`'POINT(${parseFloat(location[0])} ${parseFloat(location[1])})'`),
     );
+
+    const { vehicle_id } = req.body;
+    const checkVehicleId = await Vehicles.findOne({
+      attributes: ['id'],
+      where: { id: vehicle_id },
+      raw: true,
+    });
+    if (!checkVehicleId) {
+      return res.status(404).json({
+        message: 'Vehicle not found!',
+      });
+    }
 
     await LocationHistories.create({ location_id, ...req.body, location });
 
